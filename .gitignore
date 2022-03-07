@@ -1,0 +1,8 @@
+IRBTModUtils/
+ILSpy
+obj/
+build/
+bin/
+RarityTiedSpawner.zip
+.vs/RarityTiedSpawner/v16/.suo
+RarityTiedSpawner.csproj.user
