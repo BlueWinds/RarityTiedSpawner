@@ -9,10 +9,10 @@ namespace RarityTiedSpawner {
     [HarmonyPatch(typeof(TagSetQueryExtensions), "GetMatchingUnitDefs")]
 
     public static class TagSetQueryExtensions_GetMatchingUnitDefs {
-        private static Dictionary<UnitDef_MDD, int> numberToAddCache = new Dictionary<UnitDef_MDD, int>();
+        private static Dictionary<string, int> numberToAddCache = new Dictionary<string, int>();
         private static int numberToAdd(UnitDef_MDD unitDef) {
-            if (numberToAddCache.ContainsKey(unitDef)) {
-                return numberToAddCache[unitDef];
+            if (numberToAddCache.ContainsKey(unitDef.FriendlyName)) {
+                return numberToAddCache[unitDef.FriendlyName];
             }
 
             Settings s = RTS.settings;
@@ -23,8 +23,7 @@ namespace RarityTiedSpawner {
                     toAdd += s.moreCommonTags[tag.Name];
                 }
             }
-
-            numberToAddCache[unitDef] = toAdd;
+            numberToAddCache[unitDef.FriendlyName] = toAdd;
             return toAdd;
         }
 
