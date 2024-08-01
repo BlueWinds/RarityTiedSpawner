@@ -11,8 +11,8 @@ namespace RarityTiedSpawner {
     public static class TagSetQueryExtensions_GetMatchingUnitDefs {
         private static Dictionary<string, int> numberToAddCache = new Dictionary<string, int>();
         private static int numberToAdd(UnitDef_MDD unitDef) {
-            if (numberToAddCache.ContainsKey(unitDef.FriendlyName)) {
-                return numberToAddCache[unitDef.FriendlyName];
+            if (numberToAddCache.ContainsKey(unitDef.UnitDefID)) {
+                return numberToAddCache[unitDef.UnitDefID];
             }
 
             Settings s = RTS.settings;
@@ -23,7 +23,7 @@ namespace RarityTiedSpawner {
                     toAdd += s.moreCommonTags[tag.Name];
                 }
             }
-            numberToAddCache[unitDef.FriendlyName] = toAdd;
+            numberToAddCache[unitDef.UnitDefID] = toAdd;
             return toAdd;
         }
 
@@ -34,7 +34,7 @@ namespace RarityTiedSpawner {
                     int toAdd = numberToAdd(unitDef);
 
                     if (toAdd > 0) {
-                        RTS.modLog.Info?.Write($"Possible unit: {unitDef.FriendlyName}. Adding {toAdd} to list.");
+                        RTS.modLog.Info?.Write($"Possible unit: {unitDef.UnitDefID}. Adding {toAdd} to list.");
                         for (int i = 0; i < toAdd; i++) {
                             __result.Add(unitDef);
                         }
