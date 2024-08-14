@@ -1,6 +1,8 @@
 {
   "debug": true,
   "trace": true,
+  "excludeTag": "not",
+  "dynamicTag": "unit_rarity",
   "moreCommonTags": {
     "unit_mech": 1
   }

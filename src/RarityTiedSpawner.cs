@@ -1,16 +1,11 @@
-using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Collections.Generic;
-using Newtonsoft.Json;
 using Harmony;
 using IRBTModUtils.Logging;
-using BattleTech;
-using UnityEngine;
+using Newtonsoft.Json;
+using System;
+using System.IO;
+using System.Reflection;
 
-namespace RarityTiedSpawner
-{
+namespace RarityTiedSpawner {
     public class RTS {
         internal static DeferringLogger modLog;
         internal static string modDir;
@@ -26,9 +21,7 @@ namespace RarityTiedSpawner
                 }
                 modLog = new DeferringLogger(modDirectory, "RarityTiedSpawner", "RTS", settings.debug, settings.trace);
                 modLog.Debug?.Write($"Loaded settings from {modDir}/settings.json. Version {typeof(Settings).Assembly.GetName().Version}");
-            }
-
-            catch (Exception e) {
+            } catch (Exception e) {
                 settings = new Settings();
                 modLog = new DeferringLogger(modDir, "RarityTiedSpawner", "RTS", true, true);
                 modLog.Error?.Write(e);
