@@ -9,7 +9,7 @@ NC='\033[0m' # No Color
 if ! command -v nodemon &> /dev/null
 then
     echo -e "${RED}nodemon could not be found, compiling once and exiting.${NC}"
-    ~/.dotnet/dotnet build --verbosity normal --configuration Release -p:BattleTechGameDir='$BTPATH'
+    ~/.dotnet/dotnet build --verbosity normal --configuration Release -p:BattleTechGameDir="$BTPATH"
     exit
 fi
 

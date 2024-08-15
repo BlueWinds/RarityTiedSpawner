@@ -1,6 +1,9 @@
 ﻿<Project InitialTargets="ValidateBattleTechGameDir">
-  <Target Name="ValidateBattleTechGameDir" Condition="'$(BattleTechGameDir)' == '' Or !Exists('$(BattleTechGameDir)')">
-    <Error Text="BattleTechGameDir variable not set properly" />
+  <Target Name="ValidateBattleTechGameDir" Condition="'$(BattleTechGameDir)' == ''">
+    <Error Text="BattleTechGameDir variable empty" />
+  </Target>
+  <Target Name="ValidateBattleTechGameDir" Condition="!Exists('$(BattleTechGameDir)')">
+    <Error Text="BattleTechGameDir does not exist - $(BattleTechGameDir)" />
   </Target>
   <PropertyGroup>
     <OutputType>Library</OutputType>

@@ -11,16 +11,15 @@ namespace RarityTiedSpawner {
             private HashSet<string> NonTagCachhe;
             private Dictionary<string, int> MoreCommonTags;
             private Dictionary<string, Regex> GenericTags;
-            private Dictionary<string, int> NumberStrings;
             private Dictionary<string, int> NegativeTags;
             private Dictionary<string, int> PositiveTags;
             private Dictionary<string, List<Tag_MDD>> MechTagCache;
 
             private static Regex EndNumberPattern = new Regex(@"-?\d+$", RegexOptions.Compiled);
-            private static Regex NegativePattern = new Regex($"^{RTS.settings.excludeTag}_.+{RTS.settings.dynamicTag}_-?\\d+$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-            private static Regex PositiveTagPattern = new Regex($"^.+_{RTS.settings.dynamicTag}_-?\\d+$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-            private static Regex TagPattern = new Regex($"^{RTS.settings.dynamicTag}_-?\\d+$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-            private static Regex DynamicTagPattern = new Regex($"{RTS.settings.dynamicTag}_-?\\d+$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            private static Regex NegativePattern = new Regex($"^not_unit_rarity_-?\\d+$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            private static Regex PositiveTagPattern = new Regex($"^.+_unit_rarity_-?\\d+$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            private static Regex TagPattern = new Regex($"^unit_rarity_-?\\d+$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            private static Regex DynamicTagPattern = new Regex($"unit_rarity_-?\\d+$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
             public long timeUsed = 0;
 
@@ -38,29 +37,6 @@ namespace RarityTiedSpawner {
                 NonTagCachhe = new HashSet<string>();
                 MoreCommonTags = RTS.settings.moreCommonTags;
                 GenericTags = new Dictionary<string, Regex>();
-                NumberStrings = new Dictionary<string, int> {
-                    { "0", 0 },
-                    { "1", 1 },
-                    { "2", 2 },
-                    { "3", 3 },
-                    { "4", 4 },
-                    { "5", 5 },
-                    { "6", 6 },
-                    { "7", 7 },
-                    { "8", 8 },
-                    { "9", 9 },
-                    { "10", 10 },
-                    { "11", 11 },
-                    { "12", 12 },
-                    { "13", 13 },
-                    { "14", 14 },
-                    { "15", 15 },
-                    { "16", 16 },
-                    { "17", 17 },
-                    { "18", 18 },
-                    { "19", 19 },
-                    { "20", 20 },
-                };
                 PositiveTags = new Dictionary<string,int>();
                 NegativeTags = new Dictionary<string, int>();
                 MechTagCache = new Dictionary<string, List<Tag_MDD>>();
@@ -79,14 +55,7 @@ namespace RarityTiedSpawner {
                     }
                     if (TagPattern.IsMatch(tag.Name)) {
                         var numString = EndNumberPattern.Match(tag.Name).Value;
-                        var num = 0;
-                        if (NumberStrings.ContainsKey(numString)) {
-                            num = NumberStrings[numString];
-                        } else {
-                            num = int.Parse(numString);
-                            NumberStrings.Add(numString, num);
-                        }
-                        MoreCommonTags.Add(tag.Name, num);
+                        MoreCommonTags.Add(tag.Name, int.Parse(numString));
                         toAdd += MoreCommonTags[tag.Name];
                         continue;
                     }
@@ -110,13 +79,7 @@ namespace RarityTiedSpawner {
                             break;
                         } else {
                             var numString = EndNumberPattern.Match(tag.Name).Value;
-                            var num = 0;
-                            if (NumberStrings.ContainsKey(numString)) {
-                                num = NumberStrings[numString];
-                            } else {
-                                num = int.Parse(numString);
-                            }
-                            NegativeTags.Add(tag.Name, num);
+                            NegativeTags.Add(tag.Name, int.Parse(numString));
                             negativeAdd = NegativeTags[tag.Name];
                             break;
                         }
@@ -141,13 +104,7 @@ namespace RarityTiedSpawner {
                             break;
                         } else {
                             var numString = EndNumberPattern.Match(tag.Name).Value;
-                            var num = 0;
-                            if (NumberStrings.ContainsKey(numString)) {
-                                num = NumberStrings[numString];
-                            } else {
-                                num = int.Parse(numString);
-                            }
-                            PositiveTags.Add(tag.Name, num);
+                            PositiveTags.Add(tag.Name, int.Parse(numString));
                             positiveAdd = PositiveTags[tag.Name];
                             break;
                         }
