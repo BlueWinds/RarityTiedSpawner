@@ -4,9 +4,17 @@
     <Link Include="$(BattleTechGameDir)\Mods\.modtek\*.log*" />
   </ItemGroup>
   <Target Condition="Exists('$(BattleTechGameDir)\Mods\$(ProjectName)\')" Name="CopyFilesToGame" AfterTargets="CopyFilesToOutputDirectory">
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(BattleTechGameDir)/Mods/$(ProjectName)/" />
-  </Target>
+    <ItemGroup>
+      <DataFiles Include="README.md"/>
+    </ItemGroup>
 
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(BattleTechGameDir)/Mods/$(ProjectName)/" />
+
+    <Copy
+      SourceFiles="@(DataFiles)"
+      DestinationFolder="$(BattleTechGameDir)/Mods/$(ProjectName)/%(RecursiveDir)"
+    />
+  </Target>
   <ItemGroup>
     <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild">
       <PrivateAssets>All</PrivateAssets>
