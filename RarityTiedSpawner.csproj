@@ -12,9 +12,6 @@
       <PrivateAssets>All</PrivateAssets>
       <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
-    <PackageReference Include="GitVersion.MsBuild">
-      <PrivateAssets>All</PrivateAssets>
-    </PackageReference>
 
     <Reference Include="0Harmony" />
     <Reference Include="System" />
@@ -29,9 +26,6 @@
       <HintPath>$(BattleTechGameDir)/BattleTech_Data/Managed/Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
 
-    <Reference Include="IRBTModUtils">
-      <HintPath>$(BattleTechGameDir)/Mods/IRBTModUtils/IRBTModUtils.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>$(BattleTechGameDir)/BattleTech_Data/Managed/Newtonsoft.Json.dll</HintPath>
     </Reference>

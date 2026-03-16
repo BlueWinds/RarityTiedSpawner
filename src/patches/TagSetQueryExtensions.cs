@@ -7,137 +7,47 @@ using System.Text.RegularExpressions;
 
 namespace RarityTiedSpawner {
     public static class RarityModifications {
-        private class TagCache {
-            private HashSet<string> NonTagCachhe;
-            private Dictionary<string, int> MoreCommonTags;
-            private Dictionary<string, Regex> GenericTags;
-            private Dictionary<string, int> NegativeTags;
-            private Dictionary<string, int> PositiveTags;
-            private Dictionary<string, List<Tag_MDD>> MechTagCache;
+        private static Regex REQUIRED_TAG = new Regex("^RTS_(?<requiredTag>.*?)_unit_rarity_(?<number>-?\\d+)$", RegexOptions.Compiled);
 
-            private static Regex EndNumberPattern = new Regex(@"-?\d+$", RegexOptions.Compiled);
-            private static Regex NegativePattern = new Regex($"^not_unit_rarity_-?\\d+$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-            private static Regex PositiveTagPattern = new Regex($"^.+_unit_rarity_-?\\d+$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-            private static Regex TagPattern = new Regex($"^unit_rarity_-?\\d+$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-            private static Regex DynamicTagPattern = new Regex($"unit_rarity_-?\\d+$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        public static int getNumberToAdd(UnitDef_MDD unitDef, TagSet requiredTags) {
+            int toAdd = 0;
 
-            public long timeUsed = 0;
+            foreach (Tag_MDD tag in unitDef.TagSetEntry.Tags) {
+                if (RTS.settings.moreCommonTags.ContainsKey(tag.Name)) {
+                    toAdd += RTS.settings.moreCommonTags[tag.Name];
+                    continue;
+                }
 
-            private static TagCache _instance;
-            public static TagCache Instance {
-                get {
-                    if (_instance == null) {
-                        _instance = new TagCache();
-                    }
-                    return _instance;
+                MatchCollection matches = REQUIRED_TAG.Matches(tag.Name);
+
+                if (matches.Count > 0 && requiredTags.Contains(matches[0].Groups["requiredTag"].Value.ToLower())) {
+                    toAdd += int.Parse(matches[0].Groups["number"].Value);
+                    continue;
                 }
             }
-
-            private TagCache() {
-                NonTagCachhe = new HashSet<string>();
-                MoreCommonTags = RTS.settings.moreCommonTags;
-                GenericTags = new Dictionary<string, Regex>();
-                PositiveTags = new Dictionary<string,int>();
-                NegativeTags = new Dictionary<string, int>();
-                MechTagCache = new Dictionary<string, List<Tag_MDD>>();
-            }
-
-            public int GetNumberToAdd(UnitDef_MDD unitDef, TagSet requiredTags, TagSet excludedTags) {
-                int toAdd = 0;
-
-                if (!MechTagCache.ContainsKey(unitDef.UnitDefID)) {
-                    MechTagCache.Add(unitDef.UnitDefID, unitDef.TagSetEntry.Tags);
-                }
-                foreach (Tag_MDD tag in MechTagCache[unitDef.UnitDefID]) {
-                    if (MoreCommonTags.ContainsKey(tag.Name)) {
-                        toAdd += MoreCommonTags[tag.Name];
-                        continue;
-                    }
-                    if (TagPattern.IsMatch(tag.Name)) {
-                        var numString = EndNumberPattern.Match(tag.Name).Value;
-                        MoreCommonTags.Add(tag.Name, int.Parse(numString));
-                        toAdd += MoreCommonTags[tag.Name];
-                        continue;
-                    }
-                    if (!DynamicTagPattern.IsMatch(tag.Name)) {
-                        MoreCommonTags.Add(tag.Name, 0);
-                        continue;
-                    }
-                    var negativeAdd = 0;
-                    foreach (var negativeTag in excludedTags) {
-                        if (!NegativePattern.IsMatch(tag.Name)) {
-                            break;
-                        }
-                        if (!GenericTags.ContainsKey(negativeTag)) {
-                            GenericTags.Add(negativeTag, new Regex(Regex.Escape(negativeTag), RegexOptions.Compiled | RegexOptions.IgnoreCase));
-                        }
-                        if (!GenericTags[negativeTag].IsMatch(tag.Name)) {
-                            continue;
-                        }
-                        if (NegativeTags.ContainsKey(tag.Name)) {
-                            negativeAdd = NegativeTags[tag.Name];
-                            break;
-                        } else {
-                            var numString = EndNumberPattern.Match(tag.Name).Value;
-                            NegativeTags.Add(tag.Name, int.Parse(numString));
-                            negativeAdd = NegativeTags[tag.Name];
-                            break;
-                        }
-                    }
-                    if (negativeAdd > 0) {
-                        toAdd += negativeAdd;
-                        continue;
-                    }
-                    var positiveAdd = 0;
-                    foreach (var positiveTag in requiredTags) {
-                        if (!PositiveTagPattern.IsMatch(tag.Name)) {
-                            break;
-                        }
-                        if (!GenericTags.ContainsKey(positiveTag)) {
-                            GenericTags.Add(positiveTag, new Regex(Regex.Escape(positiveTag), RegexOptions.Compiled | RegexOptions.IgnoreCase));
-                        }
-                        if (!GenericTags[positiveTag].IsMatch(tag.Name)) {
-                            continue;
-                        }
-                        if (PositiveTags.ContainsKey(tag.Name)) {
-                            positiveAdd = PositiveTags[tag.Name];
-                            break;
-                        } else {
-                            var numString = EndNumberPattern.Match(tag.Name).Value;
-                            PositiveTags.Add(tag.Name, int.Parse(numString));
-                            positiveAdd = PositiveTags[tag.Name];
-                            break;
-                        }
-                    }
-                    if (positiveAdd > 0) {
-                        toAdd += positiveAdd;
-                        continue;
-                    }
-                }
-                return toAdd;
-            }
+            return toAdd;
         }
 
         [HarmonyPatch(typeof(TagSetQueryExtensions), "GetMatchingUnitDefs")]
         public static class TagSetQueryExtensions_GetMatchingUnitDefs {
-            private static void Postfix(ref List<UnitDef_MDD> __result, TagSet requiredTags, TagSet excludedTags, TagSet companyTags) {
+            private static void Postfix(ref List<UnitDef_MDD> __result, TagSet requiredTags) {
                 try {
-                    RTS.modLog.Info?.Write($"Old Length: {__result.Count}");
+                    RTS.l.Log($"Old Length: {__result.Count}");
                     foreach (UnitDef_MDD unitDef in __result.ToArray()) {
-                        int toAdd = TagCache.Instance.GetNumberToAdd(unitDef, requiredTags, excludedTags);
+                        int toAdd = getNumberToAdd(unitDef, requiredTags);
+                      RTS.l.Log($"Adding {unitDef.UnitDefID} to the list {toAdd} extra times.");
                         if (toAdd > 0) {
-                            RTS.modLog.Info?.Write($"Possible unit: {unitDef.UnitDefID}. Adding {toAdd} to list.");
                             for (int i = 0; i < toAdd; i++) {
                                 __result.Add(unitDef);
                             }
                         }
                     }
-                    RTS.modLog.Info?.Write($"New Length: {__result.Count}");
+                    RTS.l.Log($"New Length: {__result.Count}");
                 } catch (Exception e) {
-                    RTS.modLog.Error?.Write(e);
+                    RTS.l.LogException(e);
                 }
             }
         }
     }
-    
+
 }

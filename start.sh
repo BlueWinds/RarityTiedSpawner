@@ -1,3 +1,4 @@
 #!/bin/bash
 
-../BATTLETECH/start.sh
+cd ../game
+./run.sh
