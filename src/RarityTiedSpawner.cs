@@ -1,4 +1,4 @@
-using Harmony;
+using HarmonyLib;
 using Newtonsoft.Json;
 using System;
 using System.IO;
@@ -25,9 +25,8 @@ namespace RarityTiedSpawner {
                 l.LogException(e);
                 settings = new Settings();
             }
-
-            var harmony = HarmonyInstance.Create("blue.winds.RarityTiedSpawner");
-            harmony.PatchAll(Assembly.GetExecutingAssembly());
+            
+            Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), "blue.winds.RarityTiedSpawner");
         }
     }
 }

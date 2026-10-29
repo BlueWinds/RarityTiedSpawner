@@ -3,6 +3,8 @@ ILSpy
 obj/
 build/
 bin/
+.idea/
 RarityTiedSpawner.zip
 .vs/RarityTiedSpawner/v16/.suo
 RarityTiedSpawner.csproj.user
+/directory.build.props

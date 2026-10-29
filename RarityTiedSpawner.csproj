@@ -1,5 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="Common.props" />
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+  </PropertyGroup>
   <ItemGroup>
     <Link Include="$(BattleTechGameDir)\Mods\.modtek\*.log*" />
   </ItemGroup>
@@ -21,7 +27,11 @@
       <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
 
-    <Reference Include="0Harmony" />
+    <PackageReference Include="HarmonyX">
+      <PrivateAssets>all</PrivateAssets>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+    
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
