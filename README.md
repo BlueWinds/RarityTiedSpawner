@@ -4,6 +4,8 @@ RTS is distributed under the GNU General Public License v3.0 license. Special pe
 
 ![Made by humans. No AI was used in the creation of this work.](./dark-fox-no-ai-notice-opaque.png)
 
+[No AI Notice](https://eniko.itch.io/cute-fox-no-ai-notice) by Kitsune Games Team. [Creative Commons BY 4.0](creativecommons.org/licenses/by/4.0/)
+
 You are expressly forbidden from using this code or any of its derivatives in training data sets intended to be used for training generative AI, large language models, and other related machine learning algorithms.
 
 ## `moreCommonTags`
