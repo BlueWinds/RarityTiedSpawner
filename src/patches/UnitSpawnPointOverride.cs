@@ -4,8 +4,9 @@ using BattleTech.Data;
 using BattleTech.Framework;
 using HarmonyLib;
 using HBS.Collections;
+using RarityTiedSpawner.feature;
 
-namespace RarityTiedSpawner;
+namespace RarityTiedSpawner.patches;
 
 [HarmonyPatch(typeof(UnitSpawnPointOverride), "SelectTaggedUnitDef")]
 public static class UnitSpawnPointOverride_SelectTaggedUnitDef {
@@ -22,7 +23,7 @@ public static class UnitSpawnPointOverride_SelectTaggedUnitDef {
         
         UnitDef_MDD unitDefMdd = null;
         var watch = System.Diagnostics.Stopwatch.StartNew();
-        List<UnitDef_MDD> unitDefMddList = mdd.GetMatchingUnitDefs(unitTagSet, unitExcludedTagSet, true, currentDate, companyTags);
+        List<UnitDef_MDD> unitDefMddList = RarityController.Instance.GetMatchingUnitDefs(mdd, unitTagSet, unitExcludedTagSet, currentDate, companyTags);
         watch.Stop();
         RTS.l.Log($"MDD matching took {watch.ElapsedMilliseconds} ms");
         int num = 0;
@@ -34,11 +35,12 @@ public static class UnitSpawnPointOverride_SelectTaggedUnitDef {
         }
         if (unitDefMddList.Count > 0)
         {
-            watch = System.Diagnostics.Stopwatch.StartNew();
-            unitDefMddList.Shuffle();
-            unitDefMdd = UnitSpawnPointOverride.SelectUnitDefFromList(unitDefMddList);
-            watch.Stop();
-            RTS.l.Log($"Unit selection/shuffle took {watch.ElapsedMilliseconds} ms");
+            // vanilla code shuffles the entire list then selects the first element
+            // but with RTS, lists can be over 100K elements, making the shuffle slow
+            // instead just pick a random element, that still gives the same chances for any given unit
+            // to be selected. This uses the same random call that vanilla uses for shuffling the list
+            var index = UnityEngine.Random.Range(0, unitDefMddList.Count);
+            unitDefMdd = unitDefMddList[index];
             if (unitDefMdd != null)
             {
                 if (num > 1)
