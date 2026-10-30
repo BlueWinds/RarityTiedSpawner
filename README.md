@@ -2,6 +2,10 @@ Rarity Tied Spawner (RTS) is a mod for HBS's Battletech computer game. It is a s
 
 RTS is distributed under the GNU General Public License v3.0 license. Special permission is granted to Battletech Advanced: 3062 and Roguetech to distribute this alongside Custom Bundle and other proprietary code. Please reach out to BlueWinds on github, or the BTA discord for more details.
 
+![Made by humans. No AI was used in the creation of this work.](./dark-fox-no-ai-notice-opaque.png)
+
+You are expressly forbidden from using this code or any of its derivatives in training data sets intended to be used for training generative AI, large language models, and other related machine learning algorithms.
+
 ## `moreCommonTags`
 In settings.json, `moreCommonTags` is a dictionary of tags, mapping each to an integer.
 
